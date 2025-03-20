@@ -2,39 +2,57 @@ package bcc.battleship;
 import bcc.battleship.Constants;
 
 public class Player {
-  
-    // Constructor: Initialize the grids and the ships.
-    public Player() {
+    private Grid myGrid;
+    private Grid opponentGrid;
 
+    public Player() {
+        myGrid = new Grid();
+        opponentGrid = new Grid();
     }
-    
-    /**
-     * This method is used for testing to set a ship's location.
-     * It sets the ship's row, column, and direction, then adds it to the player's grid.
-     *
-     */
-    
-    public boolean chooseShipLocation(int index, int row, int col, int direction) {
-        
-        return false;
-    }
-   
-    /**
-     * Record a guess from the opponent.
-     * This method checks the player's grid at (row, col). If there is a ship,
-     * it marks a hit and returns true; otherwise, it marks a miss and returns false.
-     *
-     */
-    public boolean recordOpponentGuess(int row, int col) {
-        return false;
-    }
-    
-    
+
     public Grid getMyGrid() {
-        return null;
+        return myGrid;
     }
-    
+
     public Grid getOpponentGrid() {
-        return null;
+        return opponentGrid;
+    }
+
+    public boolean recordOpponentGuess(int row, int col) {
+        if (myGrid.alreadyGuessed(row, col)) {
+            return false; 
+        }
+
+        boolean hit = myGrid.hasShip(row, col);
+        if (hit) {
+            myGrid.markHit(row, col);
+            myGrid.setStatus(row, col, Constants.HIT);
+        } else {
+            myGrid.markMiss(row, col);
+            myGrid.setStatus(row, col, Constants.MISSED);
+        }
+
+        return hit;
+    }
+
+    // Method to choose a ship location and direction
+    public boolean chooseShipLocation(int shipIndex, int row, int col, int direction) {
+        Ship ship = new Ship(Constants.SHIP_LENGTHS[shipIndex]);
+        ship.setLocation(row, col);
+        ship.setDirection(direction);
+        
+        // Try to add the ship to the grid
+        return myGrid.addShip(ship);
+    }
+
+    // Optional method to check if all ships are sunk
+    public boolean allShipsSunk() {
+        return myGrid.allShipsSank();
+    }
+
+    // Optional method to reset player grids if needed
+    public void resetGrids() {
+        myGrid = new Grid();
+        opponentGrid = new Grid();
     }
 }
